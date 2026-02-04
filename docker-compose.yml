@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  esp32:
+    image: espressif/idf:release-v5.3
+    user: "${UID}:${GID}"
+    container_name: esp32-idf
+    working_dir: /work
+    volumes:
+      - ./project:/work
+      - idf-cache:/root/.espressif
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+    tty: true
+    stdin_open: true
+    environment:
+      - IDF_PATH=/opt/esp/idf
+
+volumes:
+  idf-cache:
+

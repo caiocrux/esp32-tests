@@ -1,0 +1,79 @@
+####################################
+# ESP-IDF / ESP32
+####################################
+
+# Build output
+/build/
+/build_*/
+/sdkconfig.old
+/sdkconfig.backup
+/sdkconfig.defaults
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+
+# Ninja
+.ninja_deps
+.ninja_log
+
+# ESP-IDF tools & cache
+.espressif/
+.tools/
+components/**/build/
+managed_components/
+
+# Flash & monitor artifacts
+flash_args
+flash_project_args
+monitor.log
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+
+# Coverage / debug
+*.gcda
+*.gcno
+*.gcov
+*.elf
+*.map
+
+####################################
+# Vim
+####################################
+
+# Swap files
+*.swp
+*.swo
+*.swn
+*.swm
+*.swl
+
+# Backup files
+*~
+*.bak
+
+# Session & undo
+Session.vim
+.session.vim
+.vimundo/
+.vimswap/
+.vimbackup/
+
+# NetRW history
+.netrwhist
+
+####################################
+# OS / Editor noise
+####################################
+
+.DS_Store
+Thumbs.db
+*.log
+
