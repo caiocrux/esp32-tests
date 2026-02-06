@@ -1,42 +1,77 @@
-#include "esp_chip_info.h"
-#include "esp_flash.h"
-#include "esp_system.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include <stdio.h>
+#include <string.h>
 
-void MyTask(void *pvParam) {
+/* =========================
+ *  Parameter types
+ * ========================= */
+
+typedef struct {
+  int a;
+  int b;
+  int c;
+} my_struct_t;
+
+/* =========================
+ *  Tasks
+ * ========================= */
+
+void task_int(void *pvParam) {
+  int value = *(int *)pvParam;
 
   while (1) {
-    printf("running from my first task!!\n");
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    printf("[INT] value = %d\n", value);
+    vTaskDelay(pdMS_TO_TICKS(2000));
   }
 }
 
+void task_array(void *pvParam) {
+  int *arr = (int *)pvParam;
+
+  while (1) {
+    printf("[ARRAY] %d %d %d %d %d\n", arr[0], arr[1], arr[2], arr[3], arr[4]);
+    vTaskDelay(pdMS_TO_TICKS(3000));
+  }
+}
+
+void task_struct(void *pvParam) {
+  my_struct_t *s = (my_struct_t *)pvParam;
+
+  while (1) {
+    printf("[STRUCT] a=%d b=%d c=%d\n", s->a, s->b, s->c);
+    vTaskDelay(pdMS_TO_TICKS(4000));
+  }
+}
+
+void task_string(void *pvParam) {
+  const char *str = (const char *)pvParam;
+
+  while (1) {
+    printf("[STRING] %s\n", str);
+    vTaskDelay(pdMS_TO_TICKS(5000));
+  }
+}
+
+/* =========================
+ *  app_main
+ * ========================= */
 
 void app_main(void) {
-  /* Print chip information */
-  esp_chip_info_t chip_info;
-  esp_chip_info(&chip_info);
-  printf("This is %s chip with %d CPU core(s), %s%s%s%s, ", CONFIG_IDF_TARGET,
-         chip_info.cores,
-         (chip_info.features & CHIP_FEATURE_WIFI_BGN) ? "WiFi/" : "",
-         (chip_info.features & CHIP_FEATURE_BT) ? "BT" : "",
-         (chip_info.features & CHIP_FEATURE_BLE) ? "BLE" : "",
-         (chip_info.features & CHIP_FEATURE_IEEE802154)
-             ? ", 802.15.4 (Zigbee/Thread)"
-             : "");
-  // task handler
-  TaskHandle_t myTaskHandle = NULL;
 
-  xTaskCreate(MyTask,   /* Pointer to the function that implements the task.*/
-              "Task 1", /* Text name for the task. */
-              1000,     /* Stack depth in words. */
-              NULL,     /* This example does not use the task parameter. */
-              1,        /* This task will run at priority 1. */
-              &myTaskHandle);
-  vTaskDelay(5000 / portTICK_PERIOD_MS);
-  if (myTaskHandle != NULL) {
-    vTaskDelete(myTaskHandle);
-  }
+  static int int_param = 42;
+  static int array_param[5] = {1, 2, 3, 4, 5};
+  static my_struct_t struct_param = {.a = 10, .b = 20, .c = 30};
+
+  static const char string_param[] = "Hello from ESP32";
+
+  /* ---- Task creation ---- */
+
+  xTaskCreate(task_int, "task_int", 2048, &int_param, 1, NULL);
+
+  xTaskCreate(task_array, "task_array", 2048, array_param, 1, NULL);
+
+  xTaskCreate(task_struct, "task_struct", 2048, &struct_param, 1, NULL);
+
+  xTaskCreate(task_string, "task_string", 2048, (void *)string_param, 1, NULL);
 }
