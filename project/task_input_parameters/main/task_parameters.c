@@ -53,15 +53,6 @@ void task_string(void *pvParam) {
   }
 }
 
-void task_priority_level(void *pvParam) {
-
-  const char *str = "im running inside of a task!";
-  UBaseType_t mypriority = uxTaskPriorityGet(NULL);
-  while (1) {
-    printf("[Priority] %d\n", uxTaskPriorityGet(NULL));
-    vTaskDelay(pdMS_TO_TICKS(5000));
-  }
-}
 /* =========================
  *  app_main
  * ========================= */
@@ -74,8 +65,6 @@ void app_main(void) {
 
   static const char string_param[] = "Hello from ESP32";
 
-  TaskHandle_t pxTask = NULL;
-
   /* ---- Task creation ---- */
 
   xTaskCreate(task_int, "task_int", 2048, &int_param, 1, NULL);
@@ -85,11 +74,4 @@ void app_main(void) {
   xTaskCreate(task_struct, "task_struct", 2048, &struct_param, 1, NULL);
 
   xTaskCreate(task_string, "task_string", 2048, (void *)string_param, 1, NULL);
-  
-  xTaskCreate(task_priority_level, "task_test_priority", 2048, NULL, 23, &pxTask);
-
-  UBaseType_t mypriority = uxTaskPriorityGet(pxTask);
-
-  vTaskPrioritySet(pxTask, 2);
-  
 }
