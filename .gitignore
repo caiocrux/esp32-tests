@@ -1,41 +1,73 @@
-####################################
-# ESP-IDF / ESP32
-####################################
+i# ============================================================
+# ESP-IDF build artifacts
+# ============================================================
 
-# Build output
-/build/
-/build_*/
-/sdkconfig.old
-/sdkconfig.backup
-/sdkconfig.defaults
+# Per-project build directories
+project/**/build/
+project/**/build_*/
+project/**/.idf/
 
-# CMake
-CMakeCache.txt
+# CMake intermediate files
 CMakeFiles/
+CMakeCache.txt
 cmake_install.cmake
 compile_commands.json
+*.ninja
+*.ninja_log
+*.ninja_deps
 
-# Ninja
-.ninja_deps
-.ninja_log
+# ESP-IDF generated files
+sdkconfig.old
+sdkconfig.bak
+flasher_args.json
+partition_table/
+*.bin
+*.elf
+*.map
 
-# ESP-IDF tools & cache
-.espressif/
-.tools/
-components/**/build/
-managed_components/
+# Dependency lock
+dependencies.lock
 
-# Flash & monitor artifacts
-flash_args
-flash_project_args
-monitor.log
-
-# Python
+# ============================================================
+# Python / IDF tools
+# ============================================================
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
-.venv/
-venv/
+*.pyd
+
+# ============================================================
+# Docker
+# ============================================================
+*.log
+*.tar
+*.img
+
+# ============================================================
+# Editors
+# ============================================================
+
+# VSCode
+.vscode/
+
+# CLion
+.idea/
+
+# Vim
+*.swp
+*.swo
+*~
+
+# ============================================================
+# OS junk
+# ============================================================
+.DS_Store
+Thumbs.db
+
+# ============================================================
+# Optional: allow sdkconfig but not backups
+# ============================================================
+!sdkconfig
 
 # Coverage / debug
 *.gcda
