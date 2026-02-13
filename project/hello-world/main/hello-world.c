@@ -92,5 +92,4 @@ void app_main(void) {
 
   vTaskPrioritySet(pxTask, 2);
   
-  *(int*)0 = 0;   // deliberate crash 
 }
