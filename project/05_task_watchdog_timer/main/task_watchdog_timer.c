@@ -2,16 +2,11 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include <stdio.h>
-#include <string.h>
 
-/* Stack size expressed in FreeRTOS words */
 #define TASK_STACK_WORDS (2048U)
-
-/* Watchdog timeout in seconds (configured in menuconfig) */
 #define TASK_WDT_PERIOD_MS (1000U)
-
-/* Number of healthy iterations before failure */
 #define FAULT_AFTER_ITER (8)
+#define TASK_PRIORITY (2)
 
 /**
  * @brief Simulates a task deadlock
@@ -27,23 +22,21 @@
 static void faulty_task(void *arg) {
   (void)arg;
 
-  int counter = 0;
+  if (esp_task_wdt_add(NULL) != ESP_OK) {
+    printf("[FAULTY] Failed to register with watchdog\n");
+    vTaskDelete(NULL);
+    return;
+  }
 
-  /* Register current task in TWDT */
-  (void)esp_task_wdt_add(NULL);
-
-  for (;;) {
+  for (int counter = 0;; counter++) {
     printf("[FAULTY] iteration %d\n", counter);
 
     if (counter < FAULT_AFTER_ITER) {
-      /* Normal behaviour */
-      (void)esp_task_wdt_reset();
-    } else {
-      /* Simulated lockup */
+      esp_task_wdt_reset();
+    } else if (counter == FAULT_AFTER_ITER) {
       printf("[FAULTY] watchdog feed stopped\n");
     }
 
-    counter++;
     vTaskDelay(pdMS_TO_TICKS(TASK_WDT_PERIOD_MS));
   }
 }
@@ -61,14 +54,15 @@ static void faulty_task(void *arg) {
 static void healthy_task(void *arg) {
   (void)arg;
 
-  (void)esp_task_wdt_add(NULL);
+  if (esp_task_wdt_add(NULL) != ESP_OK) {
+    printf("[HEALTHY] Failed to register with watchdog\n");
+    vTaskDelete(NULL);
+    return;
+  }
 
   for (;;) {
     printf("[HEALTHY] running normally\n");
-
-    /* Report liveness */
-    (void)esp_task_wdt_reset();
-
+    esp_task_wdt_reset();
     vTaskDelay(pdMS_TO_TICKS(TASK_WDT_PERIOD_MS));
   }
 }
@@ -85,12 +79,19 @@ static void healthy_task(void *arg) {
  */
 
 void app_main(void) {
-
   printf("\n=== ESP32 Task Watchdog Demonstration ===\n");
 
-  (void)xTaskCreate(healthy_task, "healthy_task", TASK_STACK_WORDS, NULL, 2,
-                    NULL);
+  BaseType_t ret;
 
-  (void)xTaskCreate(faulty_task, "faulty_task", TASK_STACK_WORDS, NULL, 2,
-                    NULL);
+  ret = xTaskCreate(healthy_task, "healthy_task", TASK_STACK_WORDS, NULL,
+                    TASK_PRIORITY, NULL);
+  if (ret != pdPASS) {
+    printf("Failed to create healthy_task\n");
+  }
+
+  ret = xTaskCreate(faulty_task, "faulty_task", TASK_STACK_WORDS, NULL,
+                    TASK_PRIORITY, NULL);
+  if (ret != pdPASS) {
+    printf("Failed to create faulty_task\n");
+  }
 }
