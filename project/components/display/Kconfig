@@ -1,0 +1,59 @@
+menu "Display Driver"
+
+config DISPLAY_WIDTH
+    int "Display Width"
+    default 240
+
+config DISPLAY_HEIGHT
+    int "Display Height"
+    default 320
+
+config DISPLAY_SPI_HOST
+    int "SPI Host"
+    default 2
+
+config DISPLAY_SPI_CLOCK
+    int "SPI Clock (Hz)"
+    default 40000000
+
+config DISPLAY_PIN_MOSI
+    int "GPIO MOSI"
+    default 13
+
+config DISPLAY_PIN_MISO
+    int "GPIO MISO"
+    default 12
+
+config DISPLAY_PIN_CLK
+    int "GPIO Clock"
+    default 14
+
+config DISPLAY_PIN_CS
+    int "GPIO Chip Select"
+    default 15
+
+config DISPLAY_PIN_DC
+    int "GPIO Data/Command"
+    default 2
+
+config DISPLAY_PIN_RST
+    int "GPIO Reset"
+    default -1
+
+config DISPLAY_PIN_BCKL
+    int "GPIO Backlight"
+    default 27
+
+config DISPLAY_COLOR_INVERT
+    bool "Invert Colors"
+
+config DISPLAY_MIRROR_X
+    bool "Mirror X"
+
+config DISPLAY_MIRROR_Y
+    bool "Mirror Y"
+
+config DISPLAY_BACKLIGHT_ACTIVE_LOW
+    bool "Backlight active low"
+    default n
+endmenu
