@@ -1,0 +1,26 @@
+---
+name: led
+description: Driver to control LED 
+version: 0.0.1
+groups:
+  - led
+code_owners: Caio Cruz
+depends:
+  - esp_idf_lib_helpers
+thread_safe: yes
+targets:
+  - esp32
+  - esp8266
+  - esp32s2
+  - esp32c3
+  - esp32s3
+  - esp32c2
+  - esp32c6
+  - esp32h2
+  - esp32p4
+  - esp32c5
+  - esp32c61
+license: BSD-3
+copyrights:
+  - name: Caio Cruz
+    year: 2026

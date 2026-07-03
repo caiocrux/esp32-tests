@@ -1,0 +1,18 @@
+menu "RGB LED Configuration"
+
+config RGB_LED_RED_GPIO
+    int "Red LED GPIO"
+    default 4
+    range 0 48
+
+config RGB_LED_GREEN_GPIO
+    int "Green LED GPIO"
+    default 16
+    range 0 48
+
+config RGB_LED_BLUE_GPIO
+    int "Blue LED GPIO"
+    default 17
+    range 0 48
+
+endmenu
