@@ -1,0 +1,35 @@
+menu "WiFi Configuration"
+
+config WIFI_AP_SSID
+    string "Access Point SSID"
+    default "ESP32_Test"
+    help
+        SSID advertised by the ESP32 SoftAP.
+
+config WIFI_AP_PASSWORD
+    string "Access Point Password"
+    default "12345678"
+    help
+        Password for the SoftAP.
+        Leave empty to create an open network.
+
+config WIFI_AP_CHANNEL
+    int "WiFi Channel"
+    range 1 13
+    default 1
+
+config WIFI_AP_MAX_CONNECTIONS
+    int "Maximum Connections"
+    range 1 10
+    default 4
+
+config WIFI_AP_HIDDEN
+    bool "Hide SSID"
+    default 0
+
+config WIFI_AP_BEACON_INTERVAL
+    int "Beacon Interval (ms)"
+    range 100 60000
+    default 100
+
+endmenu
