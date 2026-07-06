@@ -1,0 +1,70 @@
+menu "WiFi Configuration"
+
+config WIFI_AP_SSID
+    string "Access Point SSID"
+    default "ESP32_Test"
+    help
+        SSID advertised by the ESP32 SoftAP.
+
+config WIFI_AP_PASSWORD
+    string "Access Point Password"
+    default "12345678"
+    help
+        Password for the SoftAP.
+        Leave empty to create an open network.
+
+config WIFI_AP_CHANNEL
+    int "WiFi Channel"
+    range 1 13
+    default 1
+
+config WIFI_AP_MAX_CONNECTIONS
+    int "Maximum Connections"
+    range 1 10
+    default 4
+
+config WIFI_AP_HIDDEN
+    bool "Hide SSID"
+    default 0
+
+config WIFI_AP_BEACON_INTERVAL
+    int "Beacon Interval (ms)"
+    range 100 60000
+    default 100
+
+config WIFI_APP_TASK_PRIORITY
+    int "WiFi task priority"
+    range 1 25
+    default 5
+    help
+        FreeRTOS priority assigned to the WiFi application task.
+
+config WIFI_APP_TASK_STACK_SIZE
+    int "WiFi task stack size"
+    range 2048 16384
+    default 4096
+    help
+        Stack size, in bytes, allocated to the WiFi application task.
+
+choice WIFI_APP_TASK_CORE_AFFINITY
+    prompt "WiFi task CPU affinity"
+    default WIFI_APP_TASK_CORE_NO_AFFINITY
+
+config WIFI_APP_TASK_CORE_0
+    bool "Core 0"
+
+config WIFI_APP_TASK_CORE_1
+    bool "Core 1"
+
+config WIFI_APP_TASK_CORE_NO_AFFINITY
+    bool "No affinity"
+
+endchoice
+
+config WIFI_APP_TASK_CORE_ID
+    int
+    default 0 if WIFI_APP_TASK_CORE_0
+    default 1 if WIFI_APP_TASK_CORE_1
+    default -1 if WIFI_APP_TASK_CORE_NO_AFFINITY
+
+endmenu
