@@ -24,6 +24,13 @@ error() {
 require() {
     command -v "$1" >/dev/null 2>&1 || error "$1 is not installed"
 }
+################################################################################
+# ESP-IDF environment
+################################################################################
+
+if [ -f /opt/esp/idf/export.sh ]; then
+    . /opt/esp/idf/export.sh >/dev/null
+fi
 
 PROJECT_ROOT="project"
 
