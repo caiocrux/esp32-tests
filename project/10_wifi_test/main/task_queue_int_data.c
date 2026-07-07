@@ -18,7 +18,7 @@
 #include <led.h>
 #include <tasks_common.h>
 
-const char *TAG = "main";
+const char *TAG = "MAIN";
 
 void app_main(void) {
 
@@ -32,17 +32,5 @@ void app_main(void) {
   ESP_ERROR_CHECK(ret);
 
   ESP_LOGI(TAG, "Starting wifi application");
-  Led_Type wifi_led = {0};
-  Led(&wifi_led, CONFIG_RGB_LED_RED_GPIO, LED_RED, LED_ACTIVE_LOW);
-  LED_setState(&wifi_led, LED_ON);
-
-  esp_log_level_set("wifi", ESP_LOG_NONE);
-  // Start the WiFi application task
-  ret = xTaskCreatePinnedToCore(
-      &wifi_app_task, "wifi_app_task", WIFI_APP_TASK_STACK_SIZE, NULL,
-      WIFI_APP_TASK_PRIORITY, NULL, WIFI_APP_TASK_CORE_ID);
-
-  if (ret != pdPASS) {
-    ESP_LOGE(TAG, "Failed creating WiFi task");
-  }
+  wifi_app_init();
 }

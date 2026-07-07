@@ -32,8 +32,6 @@ esp_netif_t *wifi_app_get_sta_netif(void) { return esp_netif_sta; }
 
 esp_netif_t *wifi_app_get_ap_netif(void) { return esp_netif_ap; }
 //
-Led_Type wifi_led = {0};
-
 static void wifi_app_event_handler(void *arg, esp_event_base_t event_base,
                                    int32_t event_id, void *event_data) {
 
@@ -162,13 +160,11 @@ static void wifi_app_soft_ap_config(void) {
  * Main task for the WiFi application
  * @param pvParameters parameter which can be passed to the task
  */
-void wifi_app_task(void *pvParameters) {
-
+static void wifi_app_task(void *pvParameters) {
   wifi_app_queue_message_t msg;
 
-  wifi_app_queue_handle = xQueueCreate(
-        WIFI_APP_QUEUE_LENGTH,
-        sizeof(wifi_app_queue_message_t));
+  wifi_app_queue_handle =
+      xQueueCreate(WIFI_APP_QUEUE_LENGTH, sizeof(wifi_app_queue_message_t));
 
   // Initialize the event handler
   wifi_app_event_handler_init();
@@ -216,4 +212,22 @@ BaseType_t wifi_app_send_message(wifi_app_message_e msgID) {
     return pdFALSE;
   }
   return xQueueSend(wifi_app_queue_handle, &msg, portMAX_DELAY);
+}
+
+esp_err_t wifi_app_init(void) {
+
+  // Start the WiFi application
+  esp_err_t ret = ESP_FAIL;
+
+  // Disable default WiFi logging messages
+  esp_log_level_set("wifi_init", ESP_LOG_NONE);
+  esp_log_level_set("wifi", ESP_LOG_NONE);
+
+  ret = xTaskCreatePinnedToCore(
+      &wifi_app_task, "wifi_app_task", CONFIG_WIFI_APP_TASK_STACK_SIZE, NULL,
+      CONFIG_WIFI_APP_TASK_PRIORITY, NULL, CONFIG_WIFI_APP_TASK_CORE_ID);
+  if (ret != pdPASS) {
+    ESP_LOGE(TAG, "Failed creating WiFi task");
+  }
+  return ret;
 }

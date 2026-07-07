@@ -32,4 +32,39 @@ config WIFI_AP_BEACON_INTERVAL
     range 100 60000
     default 100
 
+config WIFI_APP_TASK_PRIORITY
+    int "WiFi task priority"
+    range 1 25
+    default 5
+    help
+        FreeRTOS priority assigned to the WiFi application task.
+
+config WIFI_APP_TASK_STACK_SIZE
+    int "WiFi task stack size"
+    range 2048 16384
+    default 4096
+    help
+        Stack size, in bytes, allocated to the WiFi application task.
+
+choice WIFI_APP_TASK_CORE_AFFINITY
+    prompt "WiFi task CPU affinity"
+    default WIFI_APP_TASK_CORE_NO_AFFINITY
+
+config WIFI_APP_TASK_CORE_0
+    bool "Core 0"
+
+config WIFI_APP_TASK_CORE_1
+    bool "Core 1"
+
+config WIFI_APP_TASK_CORE_NO_AFFINITY
+    bool "No affinity"
+
+endchoice
+
+config WIFI_APP_TASK_CORE_ID
+    int
+    default 0 if WIFI_APP_TASK_CORE_0
+    default 1 if WIFI_APP_TASK_CORE_1
+    default -1 if WIFI_APP_TASK_CORE_NO_AFFINITY
+
 endmenu

@@ -82,5 +82,6 @@ void wifi_app_call_callback(void);
  */
 int8_t wifi_app_get_rssi(void);
 
-void wifi_app_task(void *pvParameters);
+esp_err_t wifi_app_init(void);
+
 #endif /* MAIN_WIFI_APP_H_ */
