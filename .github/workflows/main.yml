@@ -13,8 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/caiocrux/esp32-ci:latest
-
+      image: ghcr.io/caiocrux/esp32-tests-ci
     steps:
 
       - uses: actions/checkout@v4
