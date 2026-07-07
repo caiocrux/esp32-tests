@@ -23,7 +23,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     clang-format \
     clang-tidy \
     cppcheck \
-    python3-pip \ 
+    python3-pip \
+    tree \ 
     && rm -rf /var/lib/apt/lists/*
 
 RUN ln -s /usr/bin/fdfind /usr/local/bin/fd || true
