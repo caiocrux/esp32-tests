@@ -74,7 +74,7 @@ void app_main(void) {
 
   char pcWriteBuffer[1024] = {0};
   while (1) {
-    vTaskList((char*)pcWriteBuffer);
+    vTaskList((char *)pcWriteBuffer);
     printf("name\t\tstate\tpriority\t\t\r\n");
     printf("\r\n %s\r\n", pcWriteBuffer);
     vTaskDelay(pdMS_TO_TICKS(MAIN_RESUME_DELAY_MS));

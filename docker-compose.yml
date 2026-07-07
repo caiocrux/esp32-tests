@@ -10,7 +10,7 @@ services:
     container_name: esp32-idf
     working_dir: /work
     volumes:
-      - ./project:/work
+      - ./:/work
       - idf-cache:/root/.espressif
 
     devices:

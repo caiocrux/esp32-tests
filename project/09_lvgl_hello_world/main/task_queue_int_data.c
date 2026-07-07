@@ -20,10 +20,10 @@ void app_main(void) {
   Display_SetRotation(DISPLAY_ROTATION_180);
   static const uint16_t colors[] = {0xF800, 0x07E0, 0x001F};
 
-  for(;;) {
-        for(int i = 0; i < ((sizeof(colors) / sizeof(colors[0]))) ; i++) {
-          Display_Fill(colors[i]);
-          vTaskDelay(pdMS_TO_TICKS(3000));
-        }
+  for (;;) {
+    for (int i = 0; i < ((sizeof(colors) / sizeof(colors[0]))); i++) {
+      Display_Fill(colors[i]);
+      vTaskDelay(pdMS_TO_TICKS(3000));
+    }
   }
 }

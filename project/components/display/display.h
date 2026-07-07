@@ -22,18 +22,16 @@
 extern "C" {
 #endif
 
-typedef enum
-{
-    DISPLAY_ROTATION_0 = 0,
-    DISPLAY_ROTATION_90,
-    DISPLAY_ROTATION_180,
-    DISPLAY_ROTATION_270
+typedef enum {
+  DISPLAY_ROTATION_0 = 0,
+  DISPLAY_ROTATION_90,
+  DISPLAY_ROTATION_180,
+  DISPLAY_ROTATION_270
 } display_rotation_t;
 
-typedef struct
-{
-    uint16_t width;
-    uint16_t height;
+typedef struct {
+  uint16_t width;
+  uint16_t height;
 } display_resolution_t;
 
 /**
@@ -64,11 +62,8 @@ esp_err_t Display_SetRotation(display_rotation_t rotation);
 /**
  * Draw bitmap.
  */
-esp_err_t Display_DrawBitmap(uint16_t x,
-                             uint16_t y,
-                             uint16_t width,
-                             uint16_t height,
-                             const void *bitmap);
+esp_err_t Display_DrawBitmap(uint16_t x, uint16_t y, uint16_t width,
+                             uint16_t height, const void *bitmap);
 
 /**
  * Get display resolution.

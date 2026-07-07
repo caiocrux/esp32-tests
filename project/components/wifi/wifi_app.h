@@ -13,13 +13,13 @@
 #include "esp_wifi_types.h"
 #include "freertos/FreeRTOS.h"
 
-#define WIFI_APP_QUEUE_LENGTH    3U
+#define WIFI_APP_QUEUE_LENGTH 3U
 
 typedef void (*wifi_connected_event_callback_t)(void);
 
 #define WIFI_AP_IP_ADDR "192.168.0.5"
 #define WIFI_AP_IP_GTW "192.168.0.5"
-#define WIFI_AP_NETMASK	"255.255.255.0"	
+#define WIFI_AP_NETMASK "255.255.255.0"
 #define WIFI_AP_BANDWIDTH WIFI_BW_HT20   // AP bandwidth 20 MHz
 #define WIFI_STA_POWER_SAVE WIFI_PS_NONE // Power save not used
 #define MAX_SSID_LENGTH 32               // IEEE standard maximum

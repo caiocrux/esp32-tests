@@ -26,17 +26,16 @@
 #ifndef LIB_GPIO_GPIO_H_
 #define LIB_GPIO_GPIO_H_
 
+#include "driver/gpio.h"
 #include <stdbool.h>
 #include <stdint.h>
-#include "driver/gpio.h"
 
-#define GPIO_LOW   (0U)
-#define GPIO_HIGH  (1U)
+#define GPIO_LOW (0U)
+#define GPIO_HIGH (1U)
 
 // Function prototypes
 esp_err_t GPIO_ConfigOutput(gpio_num_t pin);
 esp_err_t GPIO_Write(gpio_num_t pin, bool value);
 bool GPIO_Read(gpio_num_t pin);
 
-#endif  // LIB_GPIO_GPIO_H_
-
+#endif // LIB_GPIO_GPIO_H_

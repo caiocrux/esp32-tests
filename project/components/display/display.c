@@ -91,11 +91,12 @@ esp_err_t Display_Panel_Init(void) {
   ESP_RETURN_ON_ERROR(esp_lcd_new_panel_ili9341(s_io, &panel_config, &s_panel),
                       TAG, "Failed creating ILI9341");
 
-  //ESP_RETURN_ON_ERROR(esp_lcd_panel_reset(s_panel), TAG, "Panel reset failed");
+  // ESP_RETURN_ON_ERROR(esp_lcd_panel_reset(s_panel), TAG, "Panel reset
+  // failed");
 
   ESP_RETURN_ON_ERROR(esp_lcd_panel_init(s_panel), TAG, "Panel init failed");
-  //ESP_ERROR_CHECK(esp_lcd_panel_swap_xy(s_panel, true));
-  //ESP_ERROR_CHECK(esp_lcd_panel_mirror(s_panel, true, true));
+  // ESP_ERROR_CHECK(esp_lcd_panel_swap_xy(s_panel, true));
+  // ESP_ERROR_CHECK(esp_lcd_panel_mirror(s_panel, true, true));
   ESP_RETURN_ON_ERROR(esp_lcd_panel_disp_on_off(s_panel, true), TAG,
                       "Display ON failed");
 
