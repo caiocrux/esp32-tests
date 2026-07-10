@@ -16,12 +16,14 @@
 #include "nvs_flash.h"
 #include "wifi_app.h"
 #include <led.h>
-#include <tasks_common.h>
 
 const char *TAG = "MAIN";
 
+int aws_iot_demo_main(int argc, char **argv);
+
 void wifi_application_connected_events(void) {
   ESP_LOGI(TAG, "WiFi Application Connected!!");
+  aws_iot_demo_main(0, NULL);
 }
 
 void app_main(void) {
@@ -36,6 +38,6 @@ void app_main(void) {
   ESP_ERROR_CHECK(ret);
 
   ESP_LOGI(TAG, "Starting wifi application");
-  wifi_app_init();
   wifi_app_set_callback(wifi_application_connected_events);
+  wifi_app_init();
 }
