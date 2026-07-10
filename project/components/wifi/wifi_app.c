@@ -35,6 +35,8 @@ esp_netif_t *wifi_app_get_ap_netif(void) { return esp_netif_ap; }
 static void wifi_app_event_handler(void *arg, esp_event_base_t event_base,
                                    int32_t event_id, void *event_data) {
 
+static uint8_t s_retry_num = 0;
+
   if (event_base == WIFI_EVENT) {
     switch (event_id) {
     case WIFI_EVENT_AP_START:
@@ -54,7 +56,8 @@ static void wifi_app_event_handler(void *arg, esp_event_base_t event_base,
       break;
 
     case WIFI_EVENT_STA_START:
-      ESP_LOGI(TAG, "WIFI_EVENT_STA_START");
+      ESP_LOGI(TAG, "Connecting to %s", CONFIG_WIFI_STA_SSID);
+      esp_wifi_connect();
       break;
 
     case WIFI_EVENT_STA_CONNECTED:
@@ -62,7 +65,16 @@ static void wifi_app_event_handler(void *arg, esp_event_base_t event_base,
       break;
 
     case WIFI_EVENT_STA_DISCONNECTED:
-      ESP_LOGI(TAG, "WIFI_EVENT_STA_DISCONNECTED");
+       if (s_retry_num < CONFIG_WIFI_STA_MAXIMUM_RETRY) {
+            s_retry_num++;
+            ESP_LOGW(TAG, "Reconnect attempt %u/%u",
+                 s_retry_num,
+                 CONFIG_WIFI_STA_MAXIMUM_RETRY);
+            esp_wifi_connect();
+    } else {
+        ESP_LOGE(TAG, "Failed to connect to AP");
+    }
+
       break;
     }
   } else if (event_base == IP_EVENT) {
@@ -107,6 +119,33 @@ static void wifi_app_default_wifi_init(void) {
   esp_netif_ap = esp_netif_create_default_wifi_ap();
 }
 
+static void wifi_app_sta_config(void) {
+  wifi_config_t sta_config = {
+      .sta =
+          {
+              .ssid = CONFIG_WIFI_STA_SSID,
+              .password = CONFIG_WIFI_STA_PASSWORD,
+
+              .scan_method = WIFI_FAST_SCAN,
+
+              .threshold =
+                  {
+                      .authmode = WIFI_AUTH_WPA2_PSK,
+                  },
+
+              .pmf_cfg =
+                  {
+                      .capable = true,
+                      .required = false,
+                  },
+          },
+  };
+
+  ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &sta_config));
+
+  ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_STA_POWER_SAVE));
+}
+
 /**
  * Configures the WiFi access point settings and assigns the static IP to the
  * SoftAP.
@@ -115,18 +154,17 @@ static void wifi_app_soft_ap_config(void) {
 
   // SoftAP - WiFi access point configuration
   wifi_config_t ap_config = {
-      .ap =
-          {
-              .ssid = CONFIG_WIFI_AP_SSID,
-              .ssid_len = strlen(CONFIG_WIFI_AP_SSID),
-              .password = CONFIG_WIFI_AP_PASSWORD,
-              .channel = CONFIG_WIFI_AP_CHANNEL,
-              .ssid_hidden = 0,
-              .max_connection = CONFIG_WIFI_AP_MAX_CONNECTIONS,
-              .beacon_interval = CONFIG_WIFI_AP_BEACON_INTERVAL,
-              .authmode = WIFI_AUTH_WPA2_PSK,
-          },
-  };
+      .ap = {
+          .ssid = CONFIG_WIFI_AP_SSID,
+          .ssid_len = strlen(CONFIG_WIFI_AP_SSID),
+          .password = CONFIG_WIFI_AP_PASSWORD,
+          .channel = CONFIG_WIFI_AP_CHANNEL,
+          .ssid_hidden = 0,
+          .max_connection = CONFIG_WIFI_AP_MAX_CONNECTIONS,
+          .beacon_interval = CONFIG_WIFI_AP_BEACON_INTERVAL,
+          .authmode = WIFI_AUTH_WPA2_PSK,
+      }};
+
   if (strlen(CONFIG_WIFI_AP_PASSWORD) == 0) {
     ap_config.ap.authmode = WIFI_AUTH_OPEN;
   }
@@ -174,9 +212,13 @@ static void wifi_app_task(void *pvParameters) {
 
   // SoftAP config
   wifi_app_soft_ap_config();
+  // Station config
+  wifi_app_sta_config();
 
   // Start WiFi
   ESP_ERROR_CHECK(esp_wifi_start());
+  // Connect the Station interface
+  //ESP_ERROR_CHECK(esp_wifi_connect());
 
   // Send first event message
   wifi_app_send_message(WIFI_APP_MSG_START_HTTP_SERVER);

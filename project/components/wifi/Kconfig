@@ -67,4 +67,31 @@ config WIFI_APP_TASK_CORE_ID
     default 1 if WIFI_APP_TASK_CORE_1
     default -1 if WIFI_APP_TASK_CORE_NO_AFFINITY
 
+config WIFI_STA_SSID
+    string "Station SSID"
+    default "ESP32_Test"
+    help
+        SSID advertised by the ESP32 SoftAP.
+
+config WIFI_STA_PASSWORD
+    string "Station Password"
+    default "12345678"
+    help
+        Password for the SoftAP.
+        Leave empty to create an open network.
+
+config WIFI_STA_SCAN_METHOD
+    bool "Fast Scan"
+    default y
+
+config WIFI_STA_ENABLE
+    bool "Enable WiFi Station"
+    default y
+
+config WIFI_STA_MAXIMUM_RETRY
+    int "Maximum reconnect attempts"
+    default 5
+    range 0 100
+
+
 endmenu
