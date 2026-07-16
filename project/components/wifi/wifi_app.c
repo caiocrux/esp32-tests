@@ -24,6 +24,8 @@ static const char TAG[] = "wifi_app";
 
 // Queue handle used to manipulate the main queue of events
 static QueueHandle_t wifi_app_queue_handle;
+// WiFi application callback
+static wifi_connected_event_callback_t wifi_connected_event_cb;
 
 static esp_netif_t *esp_netif_sta = NULL;
 static esp_netif_t *esp_netif_ap = NULL;
@@ -35,7 +37,7 @@ esp_netif_t *wifi_app_get_ap_netif(void) { return esp_netif_ap; }
 static void wifi_app_event_handler(void *arg, esp_event_base_t event_base,
                                    int32_t event_id, void *event_data) {
 
-static uint8_t s_retry_num = 0;
+  static uint8_t s_retry_num = 0;
 
   if (event_base == WIFI_EVENT) {
     switch (event_id) {
@@ -65,15 +67,14 @@ static uint8_t s_retry_num = 0;
       break;
 
     case WIFI_EVENT_STA_DISCONNECTED:
-       if (s_retry_num < CONFIG_WIFI_STA_MAXIMUM_RETRY) {
-            s_retry_num++;
-            ESP_LOGW(TAG, "Reconnect attempt %u/%u",
-                 s_retry_num,
+      if (s_retry_num < CONFIG_WIFI_STA_MAXIMUM_RETRY) {
+        s_retry_num++;
+        ESP_LOGW(TAG, "Reconnect attempt %u/%u", s_retry_num,
                  CONFIG_WIFI_STA_MAXIMUM_RETRY);
-            esp_wifi_connect();
-    } else {
+        esp_wifi_connect();
+      } else {
         ESP_LOGE(TAG, "Failed to connect to AP");
-    }
+      }
 
       break;
     }
@@ -81,6 +82,7 @@ static uint8_t s_retry_num = 0;
     switch (event_id) {
     case IP_EVENT_STA_GOT_IP:
       ESP_LOGI(TAG, "IP_EVENT_STA_GOT_IP");
+      wifi_app_send_message(WIFI_APP_MSG_STA_CONNECTED_GOT_IP);
       break;
     }
   }
@@ -218,7 +220,7 @@ static void wifi_app_task(void *pvParameters) {
   // Start WiFi
   ESP_ERROR_CHECK(esp_wifi_start());
   // Connect the Station interface
-  //ESP_ERROR_CHECK(esp_wifi_connect());
+  // ESP_ERROR_CHECK(esp_wifi_connect());
 
   // Send first event message
   wifi_app_send_message(WIFI_APP_MSG_START_HTTP_SERVER);
@@ -236,6 +238,14 @@ static void wifi_app_task(void *pvParameters) {
 
       case WIFI_APP_MSG_STA_CONNECTED_GOT_IP:
         ESP_LOGI(TAG, "WIFI_APP_MSG_STA_CONNECTED_GOT_IP");
+        // Check for connection callback
+        ESP_LOGI(TAG, "Current callback %p", wifi_connected_event_cb);
+
+        if (wifi_connected_event_cb != NULL) {
+          wifi_app_call_callback();
+        } else {
+          ESP_LOGI(TAG, "Not calliback implemented!");
+        }
         break;
 
       default:
@@ -273,3 +283,12 @@ esp_err_t wifi_app_init(void) {
   }
   return ret;
 }
+
+void wifi_app_set_callback(wifi_connected_event_callback_t cb) {
+    ESP_LOGI(TAG, "wifi_app_set_callback called");
+    ESP_LOGI(TAG, "cb = %p", cb);
+    wifi_connected_event_cb = cb;
+    ESP_LOGI(TAG, "stored = %p", wifi_connected_event_cb);
+}
+
+void wifi_app_call_callback(void) { wifi_connected_event_cb(); }

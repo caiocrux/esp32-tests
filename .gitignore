@@ -7,6 +7,11 @@ project/**/build/
 project/**/build_*/
 project/**/.idf/
 
+certs/
+*project/**/main/certs/*.key
+*project/**/main/certs/*.pem.crt
+*project/**/main/certs/*.p12
+*project/**/main/certs/*.pfx
 # CMake intermediate files
 CMakeFiles/
 CMakeCache.txt
